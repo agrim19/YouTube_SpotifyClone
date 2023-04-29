@@ -1,4 +1,4 @@
-const TextInput = ({label, placeholder}) => {
+const TextInput = ({label, placeholder, value, setValue}) => {
     return (
         <div className="textInputDiv flex flex-col space-y-2 w-full">
             <label for={label} className="font-semibold">
@@ -9,6 +9,10 @@ const TextInput = ({label, placeholder}) => {
                 placeholder={placeholder}
                 className="p-3 border border-gray-400 border-solid rounded placeholder-gray-500"
                 id={label}
+                value={value}
+                onChange={(e) => {
+                    setValue(e.target.value);
+                }}
             />
         </div>
     );

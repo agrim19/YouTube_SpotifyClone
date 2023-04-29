@@ -12,9 +12,11 @@ const authRoutes = require("./routes/auth");
 const songRoutes = require("./routes/song");
 const playlistRoutes = require("./routes/playlist");
 require("dotenv").config();
+const cors = require("cors");
 const app = express();
 const port = 8080;
 
+app.use(cors());
 app.use(express.json());
 
 // connect mongodb to our node app.
