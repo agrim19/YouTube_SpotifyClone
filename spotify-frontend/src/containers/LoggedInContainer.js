@@ -1,13 +1,17 @@
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {Howl, Howler} from "howler";
 import {Icon} from "@iconify/react";
 import spotify_logo from "../assets/images/spotify_logo_white.svg";
 import IconText from "../components/shared/IconText";
 import TextWithHover from "../components/shared/TextWithHover";
+import songContext from "../contexts/songContext";
 
 const LoggedInContainer = ({children}) => {
     const [soundPlayed, setSoundPlayed] = useState(null);
     const [isPaused, setIsPaused] = useState(true);
+
+    const {currentSong, setCurrentSong} = useContext(songContext);
+    console.log(currentSong);
 
     const playSound = (songSrc) => {
         if (soundPlayed) {
@@ -27,9 +31,7 @@ const LoggedInContainer = ({children}) => {
 
     const togglePlayPause = () => {
         if (isPaused) {
-            playSound(
-                "https://res.cloudinary.com/dlmaf2wqn/video/upload/v1683832181/mdzsnfpdaupknork7vfn.mp3"
-            );
+            playSound(currentSong.track);
             setIsPaused(false);
         } else {
             pauseSound();
@@ -39,7 +41,7 @@ const LoggedInContainer = ({children}) => {
 
     return (
         <div className="h-full w-full bg-app-black">
-            <div className="h-9/10 w-full flex">
+            <div className={`${currentSong ? "h-9/10" : "h-full"} w-full flex`}>
                 {/* This first div will be the left panel */}
                 <div className="h-full w-1/5 bg-black flex flex-col justify-between pb-10">
                     <div>
@@ -116,60 +118,64 @@ const LoggedInContainer = ({children}) => {
                 </div>
             </div>
             {/* This div is the current playing song */}
-            <div className="w-full h-1/10 bg-black bg-opacity-30 text-white flex items-center px-4">
-                <div className="w-1/4 flex items-center">
-                    <img
-                        src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80"
-                        alt="currentSongThumbail"
-                        className="h-14 w-14 rounded"
-                    />
-                    <div className="pl-4">
-                        <div className="text-sm hover:underline cursor-pointer">
-                            Curtains
-                        </div>
-                        <div className="text-xs text-gray-500 hover:underline cursor-pointer">
-                            Ed Sheeran
+            {currentSong && (
+                <div className="w-full h-1/10 bg-black bg-opacity-30 text-white flex items-center px-4">
+                    <div className="w-1/4 flex items-center">
+                        <img
+                            src={currentSong.thumbnail}
+                            alt="currentSongThumbail"
+                            className="h-14 w-14 rounded"
+                        />
+                        <div className="pl-4">
+                            <div className="text-sm hover:underline cursor-pointer">
+                                {currentSong.name}
+                            </div>
+                            <div className="text-xs text-gray-500 hover:underline cursor-pointer">
+                                {currentSong.artist.firstName +
+                                    " " +
+                                    currentSong.artist.lastName}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className="w-1/2 flex justify-center h-full flex-col items-center">
-                    <div className="flex w-1/3 justify-between items-center">
-                        {/* controls for the playing song go here */}
-                        <Icon
-                            icon="ph:shuffle-fill"
-                            fontSize={30}
-                            className="cursor-pointer text-gray-500 hover:text-white"
-                        />
-                        <Icon
-                            icon="mdi:skip-previous-outline"
-                            fontSize={30}
-                            className="cursor-pointer text-gray-500 hover:text-white"
-                        />
-                        <Icon
-                            icon={
-                                isPaused
-                                    ? "ic:baseline-play-circle"
-                                    : "ic:baseline-pause-circle"
-                            }
-                            fontSize={50}
-                            className="cursor-pointer text-gray-500 hover:text-white"
-                            onClick={togglePlayPause}
-                        />
-                        <Icon
-                            icon="mdi:skip-next-outline"
-                            fontSize={30}
-                            className="cursor-pointer text-gray-500 hover:text-white"
-                        />
-                        <Icon
-                            icon="ic:twotone-repeat"
-                            fontSize={30}
-                            className="cursor-pointer text-gray-500 hover:text-white"
-                        />
+                    <div className="w-1/2 flex justify-center h-full flex-col items-center">
+                        <div className="flex w-1/3 justify-between items-center">
+                            {/* controls for the playing song go here */}
+                            <Icon
+                                icon="ph:shuffle-fill"
+                                fontSize={30}
+                                className="cursor-pointer text-gray-500 hover:text-white"
+                            />
+                            <Icon
+                                icon="mdi:skip-previous-outline"
+                                fontSize={30}
+                                className="cursor-pointer text-gray-500 hover:text-white"
+                            />
+                            <Icon
+                                icon={
+                                    isPaused
+                                        ? "ic:baseline-play-circle"
+                                        : "ic:baseline-pause-circle"
+                                }
+                                fontSize={50}
+                                className="cursor-pointer text-gray-500 hover:text-white"
+                                onClick={togglePlayPause}
+                            />
+                            <Icon
+                                icon="mdi:skip-next-outline"
+                                fontSize={30}
+                                className="cursor-pointer text-gray-500 hover:text-white"
+                            />
+                            <Icon
+                                icon="ic:twotone-repeat"
+                                fontSize={30}
+                                className="cursor-pointer text-gray-500 hover:text-white"
+                            />
+                        </div>
+                        {/* <div>Progress Bar Here</div> */}
                     </div>
-                    {/* <div>Progress Bar Here</div> */}
+                    <div className="w-1/4 flex justify-end">hello</div>
                 </div>
-                <div className="w-1/4 flex justify-end">hello</div>
-            </div>
+            )}
         </div>
     );
 };
