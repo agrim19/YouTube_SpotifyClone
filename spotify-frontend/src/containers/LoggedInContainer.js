@@ -1,4 +1,4 @@
-import {useContext, useState} from "react";
+import {useContext, useState, useLayoutEffect, useRef} from "react";
 import {Howl, Howler} from "howler";
 import {Icon} from "@iconify/react";
 import spotify_logo from "../assets/images/spotify_logo_white.svg";
@@ -6,14 +6,40 @@ import IconText from "../components/shared/IconText";
 import TextWithHover from "../components/shared/TextWithHover";
 import songContext from "../contexts/songContext";
 
-const LoggedInContainer = ({children}) => {
-    const [soundPlayed, setSoundPlayed] = useState(null);
-    const [isPaused, setIsPaused] = useState(true);
+const LoggedInContainer = ({children, curActiveScreen}) => {
+    const {
+        currentSong,
+        setCurrentSong,
+        soundPlayed,
+        setSoundPlayed,
+        isPaused,
+        setIsPaused,
+    } = useContext(songContext);
 
-    const {currentSong, setCurrentSong} = useContext(songContext);
-    console.log(currentSong);
+    const firstUpdate = useRef(true);
 
-    const playSound = (songSrc) => {
+    useLayoutEffect(() => {
+        // the following if statement will prevent the useEffect from running on the first render.
+        if (firstUpdate.current) {
+            firstUpdate.current = false;
+            return;
+        }
+
+        if (!currentSong) {
+            return;
+        }
+        changeSong(currentSong.track);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentSong && currentSong.track]);
+
+    const playSound = () => {
+        if (!soundPlayed) {
+            return;
+        }
+        soundPlayed.play();
+    };
+
+    const changeSong = (songSrc) => {
         if (soundPlayed) {
             soundPlayed.stop();
         }
@@ -23,6 +49,7 @@ const LoggedInContainer = ({children}) => {
         });
         setSoundPlayed(sound);
         sound.play();
+        setIsPaused(false);
     };
 
     const pauseSound = () => {
@@ -31,7 +58,7 @@ const LoggedInContainer = ({children}) => {
 
     const togglePlayPause = () => {
         if (isPaused) {
-            playSound(currentSong.track);
+            playSound();
             setIsPaused(false);
         } else {
             pauseSound();
@@ -57,21 +84,26 @@ const LoggedInContainer = ({children}) => {
                             <IconText
                                 iconName={"material-symbols:home"}
                                 displayText={"Home"}
-                                active
+                                targetLink={"/home"}
+                                active={curActiveScreen === "home"}
                             />
                             <IconText
                                 iconName={"material-symbols:search-rounded"}
                                 displayText={"Search"}
+                                active={curActiveScreen === "search"}
                             />
                             <IconText
                                 iconName={"icomoon-free:books"}
                                 displayText={"Library"}
+                                active={curActiveScreen === "library"}
                             />
                             <IconText
                                 iconName={
                                     "material-symbols:library-music-sharp"
                                 }
                                 displayText={"My Music"}
+                                targetLink="/myMusic"
+                                active={curActiveScreen === "myMusic"}
                             />
                         </div>
                         <div className="pt-5">
