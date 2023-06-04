@@ -91,6 +91,7 @@ const LoggedInContainer = ({children, curActiveScreen}) => {
                                 iconName={"material-symbols:search-rounded"}
                                 displayText={"Search"}
                                 active={curActiveScreen === "search"}
+                                targetLink={"/search"}
                             />
                             <IconText
                                 iconName={"icomoon-free:books"}
