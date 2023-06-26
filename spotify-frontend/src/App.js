@@ -8,6 +8,7 @@ import LoggedInHomeComponent from "./routes/LoggedInHome";
 import UploadSong from "./routes/UploadSong";
 import MyMusic from "./routes/MyMusic";
 import SearchPage from "./routes/SearchPage";
+import Library from "./routes/Library";
 import {useCookies} from "react-cookie";
 import songContext from "./contexts/songContext";
 
@@ -44,6 +45,7 @@ function App() {
                             />
                             <Route path="/myMusic" element={<MyMusic />} />
                             <Route path="/search" element={<SearchPage />} />
+                            <Route path="/library" element={<Library />} />
                             <Route path="*" element={<Navigate to="/home" />} />
                         </Routes>
                     </songContext.Provider>

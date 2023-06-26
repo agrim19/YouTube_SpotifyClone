@@ -5,8 +5,12 @@ import spotify_logo from "../assets/images/spotify_logo_white.svg";
 import IconText from "../components/shared/IconText";
 import TextWithHover from "../components/shared/TextWithHover";
 import songContext from "../contexts/songContext";
+import CreatePlaylistModal from "../modals/CreatePlaylistModal";
 
 const LoggedInContainer = ({children, curActiveScreen}) => {
+    const [createPlaylistModalOpen, setCreatePlaylistModalOpen] =
+        useState(false);
+
     const {
         currentSong,
         setCurrentSong,
@@ -68,6 +72,13 @@ const LoggedInContainer = ({children, curActiveScreen}) => {
 
     return (
         <div className="h-full w-full bg-app-black">
+            {createPlaylistModalOpen && (
+                <CreatePlaylistModal
+                    closeModal={() => {
+                        setCreatePlaylistModalOpen(false);
+                    }}
+                />
+            )}
             <div className={`${currentSong ? "h-9/10" : "h-full"} w-full flex`}>
                 {/* This first div will be the left panel */}
                 <div className="h-full w-1/5 bg-black flex flex-col justify-between pb-10">
@@ -97,6 +108,7 @@ const LoggedInContainer = ({children, curActiveScreen}) => {
                                 iconName={"icomoon-free:books"}
                                 displayText={"Library"}
                                 active={curActiveScreen === "library"}
+                                targetLink={"/library"}
                             />
                             <IconText
                                 iconName={
@@ -111,6 +123,9 @@ const LoggedInContainer = ({children, curActiveScreen}) => {
                             <IconText
                                 iconName={"material-symbols:add-box"}
                                 displayText={"Create Playlist"}
+                                onClick={() => {
+                                    setCreatePlaylistModalOpen(true);
+                                }}
                             />
                             <IconText
                                 iconName={"mdi:cards-heart"}

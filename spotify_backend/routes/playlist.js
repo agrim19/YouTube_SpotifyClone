@@ -50,6 +50,21 @@ router.get(
     }
 );
 
+// Get all playlists made by me
+// /get/me
+router.get(
+    "/get/me",
+    passport.authenticate("jwt", {session: false}),
+    async (req, res) => {
+        const artistId = req.user._id;
+
+        const playlists = await Playlist.find({owner: artistId}).populate(
+            "owner"
+        );
+        return res.status(200).json({data: playlists});
+    }
+);
+
 // Get all playlists made by an artist
 // /get/artist/xyz
 router.get(
