@@ -6,10 +6,13 @@ import IconText from "../components/shared/IconText";
 import TextWithHover from "../components/shared/TextWithHover";
 import songContext from "../contexts/songContext";
 import CreatePlaylistModal from "../modals/CreatePlaylistModal";
+import AddToPlaylistModal from "../modals/AddToPlaylistModal";
+import {makeAuthenticatedPOSTRequest} from "../utils/serverHelpers";
 
 const LoggedInContainer = ({children, curActiveScreen}) => {
     const [createPlaylistModalOpen, setCreatePlaylistModalOpen] =
         useState(false);
+    const [addToPlaylistModalOpen, setAddToPlaylistModalOpen] = useState(false);
 
     const {
         currentSong,
@@ -35,6 +38,19 @@ const LoggedInContainer = ({children, curActiveScreen}) => {
         changeSong(currentSong.track);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentSong && currentSong.track]);
+
+    const addSongToPlaylist = async (playlistId) => {
+        const songId = currentSong._id;
+
+        const payload = {playlistId, songId};
+        const response = await makeAuthenticatedPOSTRequest(
+            "/playlist/add/song",
+            payload
+        );
+        if(response._id){
+            setAddToPlaylistModalOpen(false)
+        }
+    };
 
     const playSound = () => {
         if (!soundPlayed) {
@@ -77,6 +93,14 @@ const LoggedInContainer = ({children, curActiveScreen}) => {
                     closeModal={() => {
                         setCreatePlaylistModalOpen(false);
                     }}
+                />
+            )}
+            {addToPlaylistModalOpen && (
+                <AddToPlaylistModal
+                    closeModal={() => {
+                        setAddToPlaylistModalOpen(false);
+                    }}
+                    addSongToPlaylist={addSongToPlaylist}
                 />
             )}
             <div className={`${currentSong ? "h-9/10" : "h-full"} w-full flex`}>
@@ -221,7 +245,21 @@ const LoggedInContainer = ({children, curActiveScreen}) => {
                         </div>
                         {/* <div>Progress Bar Here</div> */}
                     </div>
-                    <div className="w-1/4 flex justify-end">hello</div>
+                    <div className="w-1/4 flex justify-end pr-4 space-x-4 items-center">
+                        <Icon
+                            icon="ic:round-playlist-add"
+                            fontSize={30}
+                            className="cursor-pointer text-gray-500 hover:text-white"
+                            onClick={() => {
+                                setAddToPlaylistModalOpen(true);
+                            }}
+                        />
+                        <Icon
+                            icon="ph:heart-bold"
+                            fontSize={25}
+                            className="cursor-pointer text-gray-500 hover:text-white"
+                        />
+                    </div>
                 </div>
             )}
         </div>
